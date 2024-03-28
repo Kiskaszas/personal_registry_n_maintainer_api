@@ -1,13 +1,15 @@
 package com.example.personal_registry_n_maintainer_api.controller;
 
+import com.example.personal_registry_n_maintainer_api.entity.Address;
 import com.example.personal_registry_n_maintainer_api.entity.Contact;
+import com.example.personal_registry_n_maintainer_api.exception.PersonalRegistryException;
 import com.example.personal_registry_n_maintainer_api.service.ContactService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/contacts")
+@RequestMapping("/contact")
 public class ContactController {
 
     private final ContactService contactService;
@@ -22,6 +24,16 @@ public class ContactController {
         return ResponseEntity.ok(contacts);
     }
 
+    @GetMapping("/find/{id}")
+    public ResponseEntity<?> findOne(@PathVariable(name = "id") Long id){
+        try {
+            Contact contact = contactService.findById(id);
+            return ResponseEntity.ok(contact);
+        }catch (PersonalRegistryException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
     @PostMapping("/save")
     public ResponseEntity<Contact> saveContact(@RequestBody Contact contact) {
         Contact savedContact = contactService.saveContact(contact);
@@ -29,8 +41,13 @@ public class ContactController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteContact(@RequestParam Long id){
-        contactService.deleteContact(id);
+    public ResponseEntity<String> deleteContact(@PathVariable(name = "id") Long id){
+        try {
+            String message = contactService.deleteContact(id);
+            return ResponseEntity.ok(message);
+        }catch (PersonalRegistryException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 }
 

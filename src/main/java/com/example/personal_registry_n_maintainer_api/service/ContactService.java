@@ -2,7 +2,7 @@ package com.example.personal_registry_n_maintainer_api.service;
 
 import com.example.personal_registry_n_maintainer_api.entity.Contact;
 import com.example.personal_registry_n_maintainer_api.exception.PersonalRegistryException;
-import com.example.personal_registry_n_maintainer_api.repositoy.ContactRepository;
+import com.example.personal_registry_n_maintainer_api.repository.ContactRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -33,11 +33,12 @@ public class ContactService {
         }
     }
 
-    public void deleteContact(Long id){
+    public String deleteContact(Long id){
         Optional<Contact> optionalAddress = contactRepository.findById(id);
         if (optionalAddress.isPresent()){
             Long personId = optionalAddress.get().getId();
             contactRepository.deleteById(personId);
+            return "Delete successfull";
         } else {
             throw new PersonalRegistryException("Contact not found");
         }
